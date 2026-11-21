@@ -3,6 +3,7 @@
 Predicting whether a credit card client will default on payment in the following month, using the UCI "Default of Credit Card Clients" dataset (30,000 records, 23 features, 22.12% default rate).
 
 **Team:** Saudah Khaled Almhari, Jana Alshehri, Retal Alzahrani, Nawal Hussein Alghamdi
+
 **Supervisor:** Lolwah Mohammed Alharigy
 
 ## Project Structure
