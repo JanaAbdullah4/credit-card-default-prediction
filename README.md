@@ -6,13 +6,22 @@ Predicting whether a credit card client will default on payment in the following
 
 **Supervisor:** Lolwah Mohammed Alharigy
 
+## Repository Structure
+```
+├── data/        train/test split indices shared by both pairs
+├── results/     metrics, figures, and analysis outputs
+├── credit-card-default-prediction.ipynb   Pair A notebook
+├── requirements.txt
+└── README.md
+```
+
 ## Project Structure
 | Pair | Model | Status |
 |---|---|---|
 | Pair A | Logistic Regression | Done (see results below) |
 | Pair B | XGBoost | In progress |
 
-Both pairs use the same train/test split (`train_idx.csv`, `test_idx.csv`) so results are directly comparable.
+Both pairs use the same train/test split (`data/train_idx.csv`, `data/test_idx.csv`) so results are directly comparable.
 
 ## Dataset
 Download `default of credit card clients.xls` from
@@ -21,7 +30,7 @@ and place it in the project folder as `default_of_credit_card_clients.xls`.
 
 ## Requirements
 ```
-pip install pandas scikit-learn imbalanced-learn xlrd openpyxl matplotlib seaborn
+pip install -r requirements.txt
 ```
 
 ## How to Run (Pair A)
@@ -32,6 +41,13 @@ pip install pandas scikit-learn imbalanced-learn xlrd openpyxl matplotlib seabor
    - create the stratified 80/20 split (`random_state=42`) and save `train_idx.csv` / `test_idx.csv`,
    - run four experiments, 5-fold cross-validation, and feature-coefficient analysis,
    - save the result files listed below.
+4. The notebook saves its outputs in the working folder. In this repository they were moved into `data/` and `results/`.
+
+To reuse the shared split, load it from `data/`:
+```python
+train_idx = pd.read_csv("data/train_idx.csv").iloc[:, 0]
+test_idx = pd.read_csv("data/test_idx.csv").iloc[:, 0]
+```
 
 ## Pair A: Experiments
 All experiments use Logistic Regression (C = 1) inside a pipeline with standard scaling. SMOTE is applied inside the pipeline, so only on training data. Each experiment changes one thing only:
@@ -66,14 +82,18 @@ C was tuned with Grid Search (5-fold CV, ROC-AUC): performance plateaued from C 
 - SMOTE and class weighting perform equivalently (differences are within one standard deviation).
 - ROC-AUC is unchanged across experiments; these methods only move the decision point (precision vs. recall).
 - The most influential feature is `PAY_1` (most recent repayment status); demographic features contribute little.
+- BILL_AMT features are highly correlated with each other, so their individual coefficients should be interpreted with caution.
 
 ## Output Files
+**`data/`**
+- `train_idx.csv`, `test_idx.csv`: shared train/test split indices
+
+**`results/`**
 - `pair_a_results.csv`: test-set metrics for E1-E4
 - `pair_a_cv_results.csv`: cross-validation results
 - `pair_a_top_coefficients.csv`: top logistic regression coefficients (E3 model)
 - `pair_a_confusion_matrices.png`: confusion matrices for E1, E3, E4
 - `bill_amt_correlation_heatmap.png`: correlation between BILL_AMT features
-- `train_idx.csv`, `test_idx.csv`: shared train/test split indices
 
 ## Notes
 - The dataset contains 35 duplicate rows (after removing `ID`); they are kept for now (team decision pending).
